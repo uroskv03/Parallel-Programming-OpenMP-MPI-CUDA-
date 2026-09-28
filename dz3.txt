@@ -1,0 +1,37 @@
+1. p1: w miss, p0: w miss, p1: r miss, p2: w miss, p0: r miss, p0: w hit, p2: w miss, p0: r miss, p0: r miss, p0: w miss. 
+Pri svakom upisu i read miss je pristup tako da se pristupa 10 puta memoriji.
+hitrate(p1) = hitrate(p2) = hitrate(p3) = 0;  hitrate(p0) = 1/6
+2. Da, azuirira se.
+3. Memorija dostavlja podatak, azuirira memoriju i invalidira a3 u CPU1.
+4. Ne vrsi se dohvatanje iz memorije jer je vec u kesu, ali se azurira memorija
+5. Treba uvesti Write-back i na taj nacin rasteretiti magistralu. Trenutno ima previse upisa u memoriju.
+
+6. Za P0 u stanju M jer on upisuje tad, a za P1 u stanj I jer je P0 pregazio njegovu prednost pri upisu.
+7. Bice u stanje S (shared) jer cita podatak koji se nalazi u kesu P0, pa ga upisuje kod sebe u kes tako da oba kesa imaju azurnu vrednost i azurira se memorija.
+8. Zato sto se u MSI invalidira vrednost u memoriji a u kesu bude azurna modifed vrednost, dok se kod WTI kes biti u stanju V a memorija biti azurna.
+9. U koraku 8. jer se pre toga invalidira vrednost i nakon citanja te vrednost stanje se menja iz M u S pa se azurira mem.
+Na kraju nece biti azurna vrednost jer se radi upis 10. P0,W,A2  i tada se invalidira memroija i ulazi u stanje M.
+
+10. Bice u cache 1 u stanju M (modifed) i memroija se invalidirala jer se vrsio upis. Prelazi u cache 0, ali isto stanje M , I je u cache1 i u mem nije azuran.
+11. Dostavlja se iz cache0. Bice u stanju S (shared).
+12. A0 prelazi u stanje M (modifed) jer dolazi do upisa (vrednost je bila vec u cache0 tako da se ne cita iz mem) i memorija nije vise azurna.
+13. A2 se cita iz cache2 prelazi iz M u S u cache2 i cache0 i vrednost postaje azurna u memoriji, jer se cita vrednost koja je M u drugom kesu. 
+P2 salje podatak P0 upisuje podatak kod sebe i oba postaju S i memorija se azurira.
+
+14. Bice u stanju S jer se vrednost nalazi i u cache0. Cache0 je u stanju O (owned), a memorija nije azurna.
+15. U cache2 prelazi iz stanja M u O, dok u cache0 prelazi u stanje S. Memorija nije azurna.
+16. Bice u stanju E (exclusive) jer cita vrednost iz memorije, pa je on jedini kes sa tom vrednoscu, a memorija je azurna.
+17. Nece biti azurna.
+
+18. U P0 prelazi u stanje Sc iz Sm, u P1 ostaje u Sc, dok u P2 (koji i upisuje vrednost) u stanje Sm. Vrednost je 3.
+19. U 4 se ne azurira memoija, P2 je u stanju Sm i on vodi racuna o podatku i kad se izbacuje iz kesa duzan je da bude prebacen u memoriju.
+U 6 se takodje ne azuirira memorija, slicno kao gore samo sto je P0 u stanju M (ima istu odgovornost pri izbacivanju)
+20. U P0 u stanju Sc, a u P2 u stanju Sm.
+21. Bice u stanju E, jer cita direktno iz memorije, tako da je vrednost u memoriji azurna, a cache0 je jedini kes koji ima podatak.
+
+22. A3 je u stanju Sd u oba procesa (P0 i P1). 
+To znaci da je shared stanje a da nije zaprljana vrednost odnosno da je memroija azurna.
+Ekvivalentno je stanju sc (shared clean)
+23. Ne azurira se memorija jer se radi citanje podatka koji je Sd. Memorija je svakako vec bila azurna.
+24. Cache2 postaje Sd, upisuje vrednost u cache0 i azurira se vrednost u memoriji. Dostavlja se iz cache2. 
+25. Memorija jeste azurna. Nalazi se u P0 i P2 u stanju Sd.
